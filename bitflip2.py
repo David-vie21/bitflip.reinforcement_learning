@@ -103,7 +103,23 @@ if __name__ == "__main__":
             if done:
                 print("Episode: {}, Flips: {}, Score {}".format(episode, time, sumRevords))
                 break
+        done = False
+        for i in range(10):
+            state = env.reset()
+            state = np.reshape(state, [1, state_size])
+            for steps in range(num_bits):
+                action = agent.act(state, predict=True)
+                next_state, reward, done = env.step(action)
+                next_state = np.reshape(next_state, [1, state_size])
+                state = next_state
+                print(f'{state}:{action}->{next_state}')
 
-
+                if done:
+                    break
+            if not done:
+                break
+        if done:
+            print('game solved')
+            exit(0)
         if len(agent.memory) > batch_size:
             agent.replay(batch_size)
